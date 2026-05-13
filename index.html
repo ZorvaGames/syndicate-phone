@@ -6,7 +6,8 @@
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
         .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .app { text-align: center; font-size: 10px; }
+        .app { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; }
+        .app:active { transform: scale(0.9); } /* Makes the icon "press down" when clicked */
         .icon { width: 55px; height: 55px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
         .browser { background: #4285F4; }
         .store { background: #34A853; }
@@ -18,13 +19,16 @@
         <span>📶 Syndicate Mobile</span>
         <span id="data-count">--- MB</span>
     </div>
+    
     <div class="grid">
-        <div class="app"><div class="icon browser">🌐</div>Browser</div>
-        <div class="app"><div class="icon store">🏪</div>HustleStore</div>
-        <div id="hgram-icon" class="app" style="display:none;"><div class="icon hgram">📸</div>Hustlegram</div>
+        <!-- Added onclick events to trigger the apps -->
+        <div class="app" onclick="openApp('Browser')"><div class="icon browser">🌐</div>Browser</div>
+        <div class="app" onclick="openApp('Store')"><div class="icon store">🏪</div>HustleStore</div>
+        <div id="hgram-icon" class="app" style="display:none;" onclick="openApp('Hustlegram')"><div class="icon hgram">📸</div>Hustlegram</div>
     </div>
 
     <script>
+        // 1. Load Data from the Bot
         const urlParams = new URLSearchParams(window.location.search);
         const data = urlParams.get('data');
         const apps = urlParams.get('apps') || "";
@@ -32,6 +36,17 @@
         document.getElementById('data-count').innerText = data + " MB";
         if (apps.includes("hustlegram")) {
             document.getElementById('hgram-icon').style.display = "block";
+        }
+
+        // 2. The Logic to Open Apps
+        function openApp(appName) {
+            if (appName === 'Browser') {
+                alert("🌐 Opening Browser...\n\nWelcome to the underground web. HustleFan integration coming soon!");
+            } else if (appName === 'Store') {
+                alert("🏪 HustleStore\n\nPlease return to the Telegram bot and use /hustlestore to manage your installations.");
+            } else if (appName === 'Hustlegram') {
+                alert("📸 Hustlegram\n\nYou have 0 new notifications. Use /hustle_reg in the bot to create a handle!");
+            }
         }
     </script>
 </body>
