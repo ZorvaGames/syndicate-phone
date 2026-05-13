@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syndicate OS</title>
+    <style>
+        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .status-bar { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .app { text-align: center; }
+        .icon { width: 60px; height: 60px; border-radius: 15px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .browser { background: #4285f4; }
+        .store { background: #34a853; }
+        .hustlegram { background: #e1306c; }
+        .locked { opacity: 0.3; filter: grayscale(1); }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="carrier">Syndicate Mobile</span>
+        <span id="data-display">1000 MB</span>
+    </div>
+
+    <div class="grid" id="app-grid">
+        <div class="app">
+            <div class="icon browser">🌐</div>
+            <span>Browser</span>
+        </div>
+        <div class="app">
+            <div class="icon store">🏪</div>
+            <span>HustleStore</span>
+        </div>
+        <!-- Hustlegram only shows if installed -->
+        <div class="app" id="hustlegram-app" style="display:none;">
+            <div class="icon hustlegram">📸</div>
+            <span>Hustlegram</span>
+        </div>
+    </div>
+
+    <script>
+        // Get data from the URL parameters we passed from Python
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('data');
+        const apps = urlParams.get('apps') || "";
+
+        document.getElementById('data-display').innerText = data + " MB";
+
+        if (apps.includes("hustlegram")) {
+            document.getElementById('hustlegram-app').style.display = "block";
+        }
+    </script>
+</body>
+</html>
