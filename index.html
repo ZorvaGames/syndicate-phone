@@ -3,50 +3,84 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; overflow: hidden; }
         .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .app { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; }
-        .app:active { transform: scale(0.9); } /* Makes the icon "press down" when clicked */
+        .app-icon { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; }
+        .app-icon:active { transform: scale(0.9); }
         .icon { width: 55px; height: 55px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        
+        /* App Colors */
         .browser { background: #4285F4; }
         .store { background: #34A853; }
-        .hgram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); display: none; }
+        .hgram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
+
+        /* The App Screen UI */
+        .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #111; padding: 20px; box-sizing: border-box; }
+        .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="status">
-        <span>📶 Syndicate Mobile</span>
-        <span id="data-count">--- MB</span>
+    <!-- 📱 HOME SCREEN -->
+    <div id="home-screen">
+        <div class="status">
+            <span>📶 Syndicate Mobile</span>
+            <span id="data-count">--- MB</span>
+        </div>
+        
+        <div class="grid">
+            <div class="app-icon" onclick="openApp('browser-app')"><div class="icon browser">🌐</div>Browser</div>
+            <div class="app-icon" onclick="openApp('store-app')"><div class="icon store">🏪</div>Store</div>
+            <div id="hgram-icon" class="app-icon" style="display:none;" onclick="openApp('hgram-app')"><div class="icon hgram">📸</div>Hustlegram</div>
+        </div>
     </div>
-    
-    <div class="grid">
-        <!-- Added onclick events to trigger the apps -->
-        <div class="app" onclick="openApp('Browser')"><div class="icon browser">🌐</div>Browser</div>
-        <div class="app" onclick="openApp('Store')"><div class="icon store">🏪</div>HustleStore</div>
-        <div id="hgram-icon" class="app" style="display:none;" onclick="openApp('Hustlegram')"><div class="icon hgram">📸</div>Hustlegram</div>
+
+    <!-- 🌐 BROWSER APP -->
+    <div id="browser-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🌐 Dark Web Browser</h2>
+        <p>Welcome to the underground web.</p>
+        <p style="color: #aaa; font-size: 12px;">HustleFan Premium integration coming soon!</p>
+    </div>
+
+    <!-- 🏪 STORE APP -->
+    <div id="store-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🏪 HustleStore</h2>
+        <p>Your digital app marketplace.</p>
+        <p style="color: #aaa; font-size: 12px;">Close the phone and type /hustlestore in the bot to manage installations.</p>
+    </div>
+
+    <!-- 📸 HUSTLEGRAM APP -->
+    <div id="hgram-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2 style="background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📸 Hustlegram</h2>
+        <p>Feed is empty.</p>
+        <p style="color: #aaa; font-size: 12px;">Go back to the chat and use /hustle_reg [handle] to create your account!</p>
     </div>
 
     <script>
-        // 1. Load Data from the Bot
+        // 1. Read the player's stats from the Bot
         const urlParams = new URLSearchParams(window.location.search);
         const data = urlParams.get('data');
         const apps = urlParams.get('apps') || "";
         
-        document.getElementById('data-count').innerText = data + " MB";
+        document.getElementById('data-count').innerText = (data ? data : "0") + " MB";
+        
         if (apps.includes("hustlegram")) {
             document.getElementById('hgram-icon').style.display = "block";
         }
 
-        // 2. The Logic to Open Apps
-        function openApp(appName) {
-            if (appName === 'Browser') {
-                alert("🌐 Opening Browser...\n\nWelcome to the underground web. HustleFan integration coming soon!");
-            } else if (appName === 'Store') {
-                alert("🏪 HustleStore\n\nPlease return to the Telegram bot and use /hustlestore to manage your installations.");
-            } else if (appName === 'Hustlegram') {
-                alert("📸 Hustlegram\n\nYou have 0 new notifications. Use /hustle_reg in the bot to create a handle!");
-            }
+        // 2. Open / Close App Logic
+        function openApp(appId) {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById(appId).style.display = 'block';
+        }
+
+        function closeApp() {
+            const windows = document.querySelectorAll('.app-window');
+            windows.forEach(w => w.style.display = 'none');
+            document.getElementById('home-screen').style.display = 'block';
         }
     </script>
 </body>
