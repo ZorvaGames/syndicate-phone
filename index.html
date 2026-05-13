@@ -3,37 +3,35 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; overflow: hidden; }
-        .screen { height: 100vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        .status { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 30px; color: #aaa; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .app { text-align: center; }
-        .icon { width: 60px; height: 60px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .browser { background: linear-gradient(45deg, #4285f4, #34a853); }
-        .store { background: #333; border: 1px solid #555; }
-        .hgram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: none; }
+        .app { text-align: center; font-size: 10px; }
+        .icon { width: 55px; height: 55px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .browser { background: #4285F4; }
+        .store { background: #34A853; }
+        .hgram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); display: none; }
     </style>
 </head>
 <body>
-    <div class="screen">
-        <div class="status">
-            <span id="carrier">Syndicate Mobile</span>
-            <span id="data">0 MB</span>
-        </div>
-        <div class="grid">
-            <div class="app"><div class="icon browser">🌐</div><span>Browser</span></div>
-            <div class="app"><div class="icon store">🏪</div><span>Store</span></div>
-            <div id="hgram-icon" class="app"><div class="icon hgram">📸</div><span>Hustlegram</span></div>
-        </div>
+    <div class="status">
+        <span>📶 Syndicate Mobile</span>
+        <span id="data-count">--- MB</span>
+    </div>
+    <div class="grid">
+        <div class="app"><div class="icon browser">🌐</div>Browser</div>
+        <div class="app"><div class="icon store">🏪</div>HustleStore</div>
+        <div id="hgram-icon" class="app" style="display:none;"><div class="icon hgram">📸</div>Hustlegram</div>
     </div>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        document.getElementById('data').innerText = params.get('data') + " MB";
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('data');
+        const apps = urlParams.get('apps') || "";
         
-        const apps = params.get('apps') || "";
-        if(apps.includes("hustlegram")) {
-            document.getElementById('hgram-icon').querySelector('.icon').style.display = 'flex';
+        document.getElementById('data-count').innerText = data + " MB";
+        if (apps.includes("hustlegram")) {
+            document.getElementById('hgram-icon').style.display = "block";
         }
     </script>
 </body>
