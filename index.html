@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Syndicate OS</title>
     <style>
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; overflow: hidden; }
         .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
@@ -14,10 +15,13 @@
         .browser { background: #4285F4; }
         .store { background: #34A853; }
         .hgram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
+        .garage { background: #444; border: 1px solid #666; }
 
         /* The App Screen UI */
         .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #111; padding: 20px; box-sizing: border-box; }
         .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
+        
+        .car-item { background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #00ff00; }
     </style>
 </head>
 <body>
@@ -32,6 +36,7 @@
             <div class="app-icon" onclick="openApp('browser-app')"><div class="icon browser">🌐</div>Browser</div>
             <div class="app-icon" onclick="openApp('store-app')"><div class="icon store">🏪</div>Store</div>
             <div id="hgram-icon" class="app-icon" style="display:none;" onclick="openApp('hgram-app')"><div class="icon hgram">📸</div>Hustlegram</div>
+            <div class="app-icon" onclick="openApp('garage-app')"><div class="icon garage">🚘</div>Garage</div>
         </div>
     </div>
 
@@ -48,7 +53,7 @@
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
         <h2>🏪 HustleStore</h2>
         <p>Your digital app marketplace.</p>
-        <p style="color: #aaa; font-size: 12px;">Close the phone and type /hustlestore in the bot to manage installations.</p>
+        <p style="color: #aaa; font-size: 12px;">Use /hustlestore in the bot to manage installations.</p>
     </div>
 
     <!-- 📸 HUSTLEGRAM APP -->
@@ -56,22 +61,49 @@
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
         <h2 style="background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📸 Hustlegram</h2>
         <p>Feed is empty.</p>
-        <p style="color: #aaa; font-size: 12px;">Go back to the chat and use /hustle_reg [handle] to create your account!</p>
+        <p style="color: #aaa; font-size: 12px;">Use /hustle_reg in the bot to create a handle!</p>
+    </div>
+
+    <!-- 🚘 GARAGE APP -->
+    <div id="garage-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🚘 My Garage</h2>
+        <div id="car-list">
+            <!-- Cars will be injected here -->
+        </div>
     </div>
 
     <script>
-        // 1. Read the player's stats from the Bot
+        // 1. Read the player's stats from the URL (Sent by Bot)
         const urlParams = new URLSearchParams(window.location.search);
         const data = urlParams.get('data');
         const apps = urlParams.get('apps') || "";
+        const carData = urlParams.get('cars') || "";
         
+        // Update Data MB
         document.getElementById('data-count').innerText = (data ? data : "0") + " MB";
         
+        // Unlock Hustlegram if installed
         if (apps.includes("hustlegram")) {
             document.getElementById('hgram-icon').style.display = "block";
         }
 
-        // 2. Open / Close App Logic
+        // Load Garage Inventory
+        const listDiv = document.getElementById('car-list');
+        if (carData && carData !== "None") {
+            const cars = carData.split(',');
+            listDiv.innerHTML = ""; // Clear loader
+            cars.forEach(car => {
+                const div = document.createElement('div');
+                div.className = 'car-item';
+                div.innerText = car;
+                listDiv.appendChild(div);
+            });
+        } else {
+            listDiv.innerHTML = "<p style='color:#555;'>Garage is empty. Buy a car at the /dealership!</p>";
+        }
+
+        // 2. Navigation Logic
         function openApp(appId) {
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById(appId).style.display = 'block';
