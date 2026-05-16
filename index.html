@@ -161,7 +161,7 @@
             updateHomeScreenIcons();
         }
 
-        // --- NEW STORE LOGIC ---
+        // --- STORE LOGIC ---
         function updateHomeScreenIcons() {
             if (installedApps.includes('hustlegram')) {
                 document.getElementById('hgram-icon').style.display = 'flex';
@@ -231,12 +231,11 @@
             } else {
                 installedApps.push(appName);
             }
-            // Refresh detail view button
             openAppDetail(appName);
             updateHomeScreenIcons();
         }
 
-        // Profile Stats Logic
+        // --- PROFILE STATS & TABS LOGIC ---
         const hgHandle = urlParams.get('hghandle') || "";
         const hgTick = urlParams.get('hgtick') === '1';
         const rawFlwr = decodeURIComponent(urlParams.get('flwr') || "");
@@ -251,7 +250,17 @@
             const contentDiv = document.getElementById('hg-dynamic-content');
             
             if (tabName === 'home') {
-                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Just launched Syndicate OS 5.0! The new app store is blazing fast.</p></div>";
+                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Privacy update is live! Default accounts are now locked. 🔒</p></div>";
+            } else if (tabName === 'explore') {
+                contentDiv.innerHTML = `
+                    <h3>Explore & Search</h3>
+                    <div style="background:#222; padding:15px; border-radius:8px; text-align:center;">
+                        <div style="font-size:30px; margin-bottom:10px;">🔍</div>
+                        <p style="font-size:14px; color:#aaa;">To search for real players on the Syndicate Network, close your phone and use the bot command:</p>
+                        <strong style="color:#4285F4; font-size:16px;">/search [username]</strong>
+                        <p style="font-size:12px; color:#666; margin-top:10px;">Use /follow to connect!</p>
+                    </div>
+                `;
             } else if (tabName === 'profile') {
                 const displayName = hgHandle ? "@" + hgHandle : "@Unknown";
                 const tickHtml = hgTick ? "<span style='color:#1DA1F2; margin-left:5px;' title='Verified by ZENDIX'>☑️</span>" : "";
@@ -269,6 +278,7 @@
                             <div onclick='alert("FOLLOWING:\\n\\n${flwgDisplay}")' style='cursor:pointer;'><strong>${flwgList.length}</strong><br><span style='font-size:12px; color:#aaa'>Following</span></div>
                         </div>
                     </div>
+                    <button class='hg-btn' style='width:100%; padding:10px; margin-bottom:10px;' onclick='alert("Use /privacy in the bot chat to toggle your account between Public and Private!")'>⚙️ Privacy Settings</button>
                     <button class='hg-btn' style='width:100%; padding:10px;'>Edit Profile</button>
                 `;
             } else {
@@ -276,5 +286,3 @@
             }
         }
     </script>
-</body>
-</html>
