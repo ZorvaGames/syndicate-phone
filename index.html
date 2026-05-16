@@ -18,14 +18,22 @@
         .garage { background: #444; border: 1px solid #666; }
         .bank { background: #e53935; }
         .msg { background: #43a047; }
+        .contacts { background: #f57c00; }
         .settings { background: #757575; }
 
         /* The App Screen UI */
         .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #111; padding: 20px; box-sizing: border-box; }
         .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
         
-        .car-item { background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #00ff00; }
-        .message-item { background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #43a047; }
+        /* Hustlegram Specific UI */
+        .hg-window { padding: 0; display: flex; flex-direction: column; }
+        .hg-topbar { padding: 15px; background: #000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        .hg-logo { font-size: 18px; font-weight: bold; background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hg-content { flex: 1; overflow-y: auto; padding: 15px; background: #0a0a0a; }
+        .hg-bottombar { display: flex; justify-content: space-around; padding: 15px; background: #000; border-top: 1px solid #222; font-size: 20px; }
+        .hg-tab { cursor: pointer; opacity: 0.5; transition: 0.2s; }
+        .hg-tab.active { opacity: 1; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .hg-btn { background: #222; border: 1px solid #444; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -34,9 +42,9 @@
             <span>📶 Syndicate Mobile</span>
             <span id="data-count">--- MB</span>
         </div>
-        
         <div class="grid">
             <div class="app-icon" onclick="openApp('msg-app')"><div class="icon msg">💬</div>SMS</div>
+            <div class="app-icon" onclick="openApp('contacts-app')"><div class="icon contacts">📇</div>Contacts</div>
             <div class="app-icon" onclick="openApp('browser-app')"><div class="icon browser">🌐</div>Browser</div>
             <div class="app-icon" onclick="openApp('bank-app')"><div class="icon bank">🏦</div>Bank</div>
             <div class="app-icon" onclick="openApp('garage-app')"><div class="icon garage">🚘</div>Garage</div>
@@ -46,96 +54,82 @@
         </div>
     </div>
 
-    <div id="msg-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>💬 Secure Messages</h2>
-        <div class="message-item">
-            <strong>System:</strong> Welcome to Syndicate OS. Use /msg [Name] [Text] in the bot to send SMS to other players.
+    <div id="hgram-app" class="app-window hg-window">
+        <div class="hg-topbar">
+            <span class="hg-logo" onclick="closeApp()">◀ Hustlegram</span>
+            <div>
+                <span style="cursor:pointer; margin-right: 15px; font-size: 20px;" onclick="switchHgTab('notify')">❤️</span>
+                <span style="cursor:pointer; font-size: 20px;" onclick="switchHgTab('messages')">💬</span>
+            </div>
+        </div>
+
+        <div id="hg-dynamic-content" class="hg-content">
+            </div>
+
+        <div class="hg-bottombar">
+            <span id="tab-home" class="hg-tab active" onclick="switchHgTab('home')">🏠</span>
+            <span id="tab-reels" class="hg-tab" onclick="switchHgTab('reels')">🎞️</span>
+            <span id="tab-explore" class="hg-tab" onclick="switchHgTab('explore')">🔍</span>
+            <span id="tab-profile" class="hg-tab" onclick="switchHgTab('profile')">👤</span>
         </div>
     </div>
 
-    <div id="bank-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🏦 Maze Bank</h2>
-        <p style="color: #aaa;">Secure offshore banking.</p>
-        <div style="background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-            <h3 style="margin: 0; color: #4caf50;">Check Balance</h3>
-            <p style="margin: 5px 0 0 0; font-size: 12px; color: #888;">Close phone and use /me to view your Vault & Cash balances.</p>
-        </div>
-    </div>
-
-    <div id="browser-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🌐 Dark Web</h2>
-        <p>Welcome to the underground web.</p>
-    </div>
-
-    <div id="store-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🏪 HustleStore</h2>
-        <p style="color: #aaa; font-size: 12px;">Use /hustlestore in the bot to manage installations.</p>
-    </div>
-
-    <div id="hgram-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2 style="background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📸 Hustlegram</h2>
-        <p style="color: #aaa; font-size: 12px;">Use /hustle_reg in the bot to create a handle!</p>
-    </div>
-
-    <div id="garage-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🚘 My Garage</h2>
-        <div id="car-list"></div>
-    </div>
-
-    <div id="settings-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>⚙️ Settings</h2>
-        <p><strong>OS Version:</strong> 3.0 Syndicate</p>
-        <p><strong>Connection:</strong> GTPay Secure</p>
-        <p><strong>SIM Status:</strong> Active</p>
-    </div>
+    <div id="msg-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>💬 SMS</h2><p>Use /msg in bot.</p></div>
+    <div id="contacts-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>📇 Contacts</h2></div>
+    <div id="browser-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🌐 Browser</h2></div>
+    <div id="bank-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏦 Bank</h2></div>
+    <div id="store-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏪 Store</h2><p>Use /hustlestore in bot.</p></div>
+    <div id="garage-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🚘 Garage</h2></div>
+    <div id="settings-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>⚙️ Settings</h2></div>
 
     <script>
-        // 1. Read the player's stats from the URL
         const urlParams = new URLSearchParams(window.location.search);
-        const data = urlParams.get('data');
-        const apps = urlParams.get('apps') || "";
-        const carData = urlParams.get('cars') || "";
-        
-        // Update Data MB
-        document.getElementById('data-count').innerText = (data ? data : "0") + " MB";
-        
-        // Unlock Hustlegram if installed
-        if (apps.includes("hustlegram")) {
-            document.getElementById('hgram-icon').style.display = "block";
-        }
+        document.getElementById('data-count').innerText = (urlParams.get('data') || "0") + " MB";
+        if ((urlParams.get('apps') || "").includes("hustlegram")) { document.getElementById('hgram-icon').style.display = "block"; }
 
-        // Load Garage Inventory
-        const listDiv = document.getElementById('car-list');
-        if (carData && carData !== "None") {
-            const cars = carData.split(',');
-            listDiv.innerHTML = ""; 
-            cars.forEach(car => {
-                const div = document.createElement('div');
-                div.className = 'car-item';
-                div.innerText = car;
-                listDiv.appendChild(div);
-            });
-        } else {
-            listDiv.innerHTML = "<p style='color:#555;'>Garage is empty. Buy a car at the /dealership!</p>";
-        }
-
-        // 2. Navigation Logic
         function openApp(appId) {
             document.getElementById('home-screen').style.display = 'none';
-            document.getElementById(appId).style.display = 'block';
+            document.getElementById(appId).style.display = 'flex';
+            if(appId === 'hgram-app') switchHgTab('home'); // Auto load home
+        }
+        function closeApp() {
+            document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
+            document.getElementById('home-screen').style.display = 'block';
         }
 
-        function closeApp() {
-            const windows = document.querySelectorAll('.app-window');
-            windows.forEach(w => w.style.display = 'none');
-            document.getElementById('home-screen').style.display = 'block';
+        // --- HUSTLEGRAM LOGIC ---
+        function switchHgTab(tabName) {
+            // Update active icon glow
+            document.querySelectorAll('.hg-tab').forEach(t => t.classList.remove('active'));
+            if(document.getElementById('tab-' + tabName)) {
+                document.getElementById('tab-' + tabName).classList.add('active');
+            }
+
+            const contentDiv = document.getElementById('hg-dynamic-content');
+            
+            if (tabName === 'home') {
+                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@Maya_Bot</strong><p>Just bought a new Blista Compact! 🚗💨</p></div>";
+            } else if (tabName === 'reels') {
+                contentDiv.innerHTML = "<h3>Reels</h3><div style='height:300px; background:#222; display:flex; align-items:center; justify-content:center; border-radius:10px;'>▶️ Swipe Up</div>";
+            } else if (tabName === 'explore') {
+                contentDiv.innerHTML = "<h3>Explore</h3><p style='color:#aaa'>Trending in Los Santos: #BankHeist #NewCars</p>";
+            } else if (tabName === 'profile') {
+                contentDiv.innerHTML = `
+                    <div style='text-align:center; margin-bottom:20px;'>
+                        <div style='width:80px; height:80px; background:#444; border-radius:50%; margin:0 auto 10px;'></div>
+                        <h2>Your Profile</h2>
+                        <div style='display:flex; justify-content:space-around; background:#111; padding:10px; border-radius:8px;'>
+                            <div onclick='alert("Followers list: Maya, John, Toby")' style='cursor:pointer;'><strong>3</strong><br><span style='font-size:12px; color:#aaa'>Followers</span></div>
+                            <div onclick='alert("Following list: LSPD_Official, LosSantosNews")' style='cursor:pointer;'><strong>2</strong><br><span style='font-size:12px; color:#aaa'>Following</span></div>
+                        </div>
+                    </div>
+                    <button class='hg-btn' style='width:100%; padding:10px;'>Edit Profile</button>
+                `;
+            } else if (tabName === 'notify') {
+                contentDiv.innerHTML = "<h3>Notifications</h3><p style='color:#aaa; font-size:12px;'>New login detected from Syndicate OS.</p><div style='background:#111; padding:10px; border-radius:5px; margin-bottom:5px;'><strong>@John</strong> started following you.</div><div style='background:#111; padding:10px; border-radius:5px;'>Suggestion: Follow <strong>@Maya</strong></div>";
+            } else if (tabName === 'messages') {
+                contentDiv.innerHTML = "<h3>Direct Messages</h3><p style='color:#aaa; font-size:12px;'>End-to-end encrypted.</p><div style='background:#111; padding:10px; border-radius:5px;'><strong>@Maya:</strong> Hey, want to do a heist later?</div>";
+            }
         }
     </script>
 </body>
