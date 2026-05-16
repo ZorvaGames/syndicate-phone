@@ -25,7 +25,7 @@
         .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #111; padding: 20px; box-sizing: border-box; }
         .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
         
-        /* Hustlegram Specific UI */
+        /* Hustlegram & Store UI */
         .hg-window { padding: 0; display: flex; flex-direction: column; }
         .hg-topbar { padding: 15px; background: #000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
         .hg-logo { font-size: 18px; font-weight: bold; background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -34,6 +34,8 @@
         .hg-tab { cursor: pointer; opacity: 0.5; transition: 0.2s; }
         .hg-tab.active { opacity: 1; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .hg-btn { background: #222; border: 1px solid #444; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        
+        .store-item { background: #222; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -54,6 +56,23 @@
         </div>
     </div>
 
+    <div id="store-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🏪 HustleStore</h2>
+        <p style="color: #aaa; font-size: 12px; margin-top: -10px;">Your digital marketplace.</p>
+        
+        <div class="store-item">
+            <div style="display:flex; align-items:center;">
+                <div class="icon hgram" style="width:40px; height:40px; font-size:16px; margin:0 10px 0 0;">📸</div>
+                <div><strong>Hustlegram</strong><br><span style="color:#aaa; font-size:12px;">Social Media</span></div>
+            </div>
+            <button id="store-btn-hgram" class="hg-btn" onclick="toggleApp('hustlegram')">Install</button>
+        </div>
+        <p style="color: #666; font-size: 10px; text-align: center; margin-top: 20px;">
+            ⚠️ Notice: Deleting apps here removes them from your screen. To permanently sync to the server, you must still use /hustlestore in the bot chat.
+        </p>
+    </div>
+
     <div id="hgram-app" class="app-window hg-window">
         <div class="hg-topbar">
             <span class="hg-logo" onclick="closeApp()">◀ Hustlegram</span>
@@ -72,22 +91,46 @@
     <div id="contacts-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>📇 Contacts</h2></div>
     <div id="browser-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🌐 Browser</h2></div>
     <div id="bank-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏦 Bank</h2></div>
-    <div id="store-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏪 Store</h2></div>
     <div id="garage-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🚘 Garage</h2></div>
     <div id="settings-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>⚙️ Settings</h2></div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         document.getElementById('data-count').innerText = (urlParams.get('data') || "0") + " MB";
-        if ((urlParams.get('apps') || "").includes("hustlegram")) { document.getElementById('hgram-icon').style.display = "block"; }
+        
+        // App Installation Logic
+        let installedApps = (urlParams.get('apps') || "").split(',');
 
-        // NEW: Get Real Profile Stats
+        function updateStoreUI() {
+            const hgBtn = document.getElementById('store-btn-hgram');
+            if (installedApps.includes('hustlegram')) {
+                hgBtn.innerText = 'Delete';
+                hgBtn.style.background = '#e53935'; // Red for delete
+                document.getElementById('hgram-icon').style.display = 'block';
+            } else {
+                hgBtn.innerText = 'Install';
+                hgBtn.style.background = '#34A853'; // Green for install
+                document.getElementById('hgram-icon').style.display = 'none';
+            }
+        }
+        
+        function toggleApp(appName) {
+            if (installedApps.includes(appName)) {
+                installedApps = installedApps.filter(a => a !== appName);
+            } else {
+                installedApps.push(appName);
+            }
+            updateStoreUI();
+        }
+
+        // Initialize Store on load
+        updateStoreUI();
+
+        // Profile Stats Logic
         const hgHandle = urlParams.get('hghandle') || "";
         const hgTick = urlParams.get('hgtick') === '1';
-        
         const rawFlwr = decodeURIComponent(urlParams.get('flwr') || "");
         const rawFlwg = decodeURIComponent(urlParams.get('flwg') || "");
-        
         const flwrList = (rawFlwr && rawFlwr !== "None") ? rawFlwr.split(',') : [];
         const flwgList = (rawFlwg && rawFlwg !== "None") ? rawFlwg.split(',') : [];
 
@@ -110,11 +153,8 @@
             if (tabName === 'home') {
                 contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Just launched Syndicate OS 4.0! Welcome to the new era.</p></div>";
             } else if (tabName === 'profile') {
-                
-                // Build Profile Display
                 const displayName = hgHandle ? "@" + hgHandle : "@Unknown";
                 const tickHtml = hgTick ? "<span style='color:#1DA1F2; margin-left:5px;' title='Verified by ZENDIX'>☑️</span>" : "";
-                
                 const flwrDisplay = flwrList.length > 0 ? flwrList.join("\\n") : "No followers yet.";
                 const flwgDisplay = flwgList.length > 0 ? flwgList.join("\\n") : "Not following anyone.";
 
