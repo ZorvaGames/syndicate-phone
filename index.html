@@ -6,26 +6,29 @@
     <style>
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; overflow: hidden; }
         .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .app-icon { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; }
         .app-icon:active { transform: scale(0.9); }
-        .icon { width: 55px; height: 55px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .icon { width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
         /* App Colors */
         .browser { background: #4285F4; }
         .store { background: #34A853; }
         .hgram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
         .garage { background: #444; border: 1px solid #666; }
+        .bank { background: #e53935; }
+        .msg { background: #43a047; }
+        .settings { background: #757575; }
 
         /* The App Screen UI */
         .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #111; padding: 20px; box-sizing: border-box; }
         .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
         
         .car-item { background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #00ff00; }
+        .message-item { background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid #43a047; }
     </style>
 </head>
 <body>
-    <!-- 📱 HOME SCREEN -->
     <div id="home-screen">
         <div class="status">
             <span>📶 Syndicate Mobile</span>
@@ -33,48 +36,68 @@
         </div>
         
         <div class="grid">
+            <div class="app-icon" onclick="openApp('msg-app')"><div class="icon msg">💬</div>SMS</div>
             <div class="app-icon" onclick="openApp('browser-app')"><div class="icon browser">🌐</div>Browser</div>
+            <div class="app-icon" onclick="openApp('bank-app')"><div class="icon bank">🏦</div>Bank</div>
+            <div class="app-icon" onclick="openApp('garage-app')"><div class="icon garage">🚘</div>Garage</div>
             <div class="app-icon" onclick="openApp('store-app')"><div class="icon store">🏪</div>Store</div>
             <div id="hgram-icon" class="app-icon" style="display:none;" onclick="openApp('hgram-app')"><div class="icon hgram">📸</div>Hustlegram</div>
-            <div class="app-icon" onclick="openApp('garage-app')"><div class="icon garage">🚘</div>Garage</div>
+            <div class="app-icon" onclick="openApp('settings-app')"><div class="icon settings">⚙️</div>Settings</div>
         </div>
     </div>
 
-    <!-- 🌐 BROWSER APP -->
-    <div id="browser-app" class="app-window">
+    <div id="msg-app" class="app-window">
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🌐 Dark Web Browser</h2>
-        <p>Welcome to the underground web.</p>
-        <p style="color: #aaa; font-size: 12px;">HustleFan Premium integration coming soon!</p>
+        <h2>💬 Secure Messages</h2>
+        <div class="message-item">
+            <strong>System:</strong> Welcome to Syndicate OS. Use /msg [Name] [Text] in the bot to send SMS to other players.
+        </div>
     </div>
 
-    <!-- 🏪 STORE APP -->
+    <div id="bank-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🏦 Maze Bank</h2>
+        <p style="color: #aaa;">Secure offshore banking.</p>
+        <div style="background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #4caf50;">Check Balance</h3>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #888;">Close phone and use /me to view your Vault & Cash balances.</p>
+        </div>
+    </div>
+
+    <div id="browser-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>🌐 Dark Web</h2>
+        <p>Welcome to the underground web.</p>
+    </div>
+
     <div id="store-app" class="app-window">
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
         <h2>🏪 HustleStore</h2>
-        <p>Your digital app marketplace.</p>
         <p style="color: #aaa; font-size: 12px;">Use /hustlestore in the bot to manage installations.</p>
     </div>
 
-    <!-- 📸 HUSTLEGRAM APP -->
     <div id="hgram-app" class="app-window">
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
         <h2 style="background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📸 Hustlegram</h2>
-        <p>Feed is empty.</p>
         <p style="color: #aaa; font-size: 12px;">Use /hustle_reg in the bot to create a handle!</p>
     </div>
 
-    <!-- 🚘 GARAGE APP -->
     <div id="garage-app" class="app-window">
         <button class="back-btn" onclick="closeApp()">◀ Home</button>
         <h2>🚘 My Garage</h2>
-        <div id="car-list">
-            <!-- Cars will be injected here -->
-        </div>
+        <div id="car-list"></div>
+    </div>
+
+    <div id="settings-app" class="app-window">
+        <button class="back-btn" onclick="closeApp()">◀ Home</button>
+        <h2>⚙️ Settings</h2>
+        <p><strong>OS Version:</strong> 3.0 Syndicate</p>
+        <p><strong>Connection:</strong> GTPay Secure</p>
+        <p><strong>SIM Status:</strong> Active</p>
     </div>
 
     <script>
-        // 1. Read the player's stats from the URL (Sent by Bot)
+        // 1. Read the player's stats from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const data = urlParams.get('data');
         const apps = urlParams.get('apps') || "";
@@ -92,7 +115,7 @@
         const listDiv = document.getElementById('car-list');
         if (carData && carData !== "None") {
             const cars = carData.split(',');
-            listDiv.innerHTML = ""; // Clear loader
+            listDiv.innerHTML = ""; 
             cars.forEach(car => {
                 const div = document.createElement('div');
                 div.className = 'car-item';
