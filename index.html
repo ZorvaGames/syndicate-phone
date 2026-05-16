@@ -57,15 +57,9 @@
     <div id="hgram-app" class="app-window hg-window">
         <div class="hg-topbar">
             <span class="hg-logo" onclick="closeApp()">◀ Hustlegram</span>
-            <div>
-                <span style="cursor:pointer; margin-right: 15px; font-size: 20px;" onclick="switchHgTab('notify')">❤️</span>
-                <span style="cursor:pointer; font-size: 20px;" onclick="switchHgTab('messages')">💬</span>
-            </div>
+            <div><span style="cursor:pointer; margin-right: 15px;" onclick="switchHgTab('notify')">❤️</span><span style="cursor:pointer;" onclick="switchHgTab('messages')">💬</span></div>
         </div>
-
-        <div id="hg-dynamic-content" class="hg-content">
-            </div>
-
+        <div id="hg-dynamic-content" class="hg-content"></div>
         <div class="hg-bottombar">
             <span id="tab-home" class="hg-tab active" onclick="switchHgTab('home')">🏠</span>
             <span id="tab-reels" class="hg-tab" onclick="switchHgTab('reels')">🎞️</span>
@@ -74,11 +68,11 @@
         </div>
     </div>
 
-    <div id="msg-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>💬 SMS</h2><p>Use /msg in bot.</p></div>
+    <div id="msg-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>💬 SMS</h2></div>
     <div id="contacts-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>📇 Contacts</h2></div>
     <div id="browser-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🌐 Browser</h2></div>
     <div id="bank-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏦 Bank</h2></div>
-    <div id="store-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏪 Store</h2><p>Use /hustlestore in bot.</p></div>
+    <div id="store-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏪 Store</h2></div>
     <div id="garage-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🚘 Garage</h2></div>
     <div id="settings-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>⚙️ Settings</h2></div>
 
@@ -87,48 +81,58 @@
         document.getElementById('data-count').innerText = (urlParams.get('data') || "0") + " MB";
         if ((urlParams.get('apps') || "").includes("hustlegram")) { document.getElementById('hgram-icon').style.display = "block"; }
 
+        // NEW: Get Real Profile Stats
+        const hgHandle = urlParams.get('hghandle') || "";
+        const hgTick = urlParams.get('hgtick') === '1';
+        
+        const rawFlwr = decodeURIComponent(urlParams.get('flwr') || "");
+        const rawFlwg = decodeURIComponent(urlParams.get('flwg') || "");
+        
+        const flwrList = (rawFlwr && rawFlwr !== "None") ? rawFlwr.split(',') : [];
+        const flwgList = (rawFlwg && rawFlwg !== "None") ? rawFlwg.split(',') : [];
+
         function openApp(appId) {
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById(appId).style.display = 'flex';
-            if(appId === 'hgram-app') switchHgTab('home'); // Auto load home
+            if(appId === 'hgram-app') switchHgTab('home'); 
         }
         function closeApp() {
             document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
             document.getElementById('home-screen').style.display = 'block';
         }
 
-        // --- HUSTLEGRAM LOGIC ---
         function switchHgTab(tabName) {
-            // Update active icon glow
             document.querySelectorAll('.hg-tab').forEach(t => t.classList.remove('active'));
-            if(document.getElementById('tab-' + tabName)) {
-                document.getElementById('tab-' + tabName).classList.add('active');
-            }
+            if(document.getElementById('tab-' + tabName)) { document.getElementById('tab-' + tabName).classList.add('active'); }
 
             const contentDiv = document.getElementById('hg-dynamic-content');
             
             if (tabName === 'home') {
-                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@Maya_Bot</strong><p>Just bought a new Blista Compact! 🚗💨</p></div>";
-            } else if (tabName === 'reels') {
-                contentDiv.innerHTML = "<h3>Reels</h3><div style='height:300px; background:#222; display:flex; align-items:center; justify-content:center; border-radius:10px;'>▶️ Swipe Up</div>";
-            } else if (tabName === 'explore') {
-                contentDiv.innerHTML = "<h3>Explore</h3><p style='color:#aaa'>Trending in Los Santos: #BankHeist #NewCars</p>";
+                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Just launched Syndicate OS 4.0! Welcome to the new era.</p></div>";
             } else if (tabName === 'profile') {
+                
+                // Build Profile Display
+                const displayName = hgHandle ? "@" + hgHandle : "@Unknown";
+                const tickHtml = hgTick ? "<span style='color:#1DA1F2; margin-left:5px;' title='Verified by ZENDIX'>☑️</span>" : "";
+                
+                const flwrDisplay = flwrList.length > 0 ? flwrList.join("\\n") : "No followers yet.";
+                const flwgDisplay = flwgList.length > 0 ? flwgList.join("\\n") : "Not following anyone.";
+
                 contentDiv.innerHTML = `
                     <div style='text-align:center; margin-bottom:20px;'>
                         <div style='width:80px; height:80px; background:#444; border-radius:50%; margin:0 auto 10px;'></div>
-                        <h2>Your Profile</h2>
+                        <h2 style='margin-bottom: 5px; font-size: 24px;'>${displayName}${tickHtml}</h2>
+                        <p style='color:#aaa; font-size:12px; margin-top:0;'>Syndicate Citizen</p>
+                        
                         <div style='display:flex; justify-content:space-around; background:#111; padding:10px; border-radius:8px;'>
-                            <div onclick='alert("Followers list: Maya, John, Toby")' style='cursor:pointer;'><strong>3</strong><br><span style='font-size:12px; color:#aaa'>Followers</span></div>
-                            <div onclick='alert("Following list: LSPD_Official, LosSantosNews")' style='cursor:pointer;'><strong>2</strong><br><span style='font-size:12px; color:#aaa'>Following</span></div>
+                            <div onclick='alert("FOLLOWERS:\\n\\n${flwrDisplay}")' style='cursor:pointer;'><strong>${flwrList.length}</strong><br><span style='font-size:12px; color:#aaa'>Followers</span></div>
+                            <div onclick='alert("FOLLOWING:\\n\\n${flwgDisplay}")' style='cursor:pointer;'><strong>${flwgList.length}</strong><br><span style='font-size:12px; color:#aaa'>Following</span></div>
                         </div>
                     </div>
                     <button class='hg-btn' style='width:100%; padding:10px;'>Edit Profile</button>
                 `;
-            } else if (tabName === 'notify') {
-                contentDiv.innerHTML = "<h3>Notifications</h3><p style='color:#aaa; font-size:12px;'>New login detected from Syndicate OS.</p><div style='background:#111; padding:10px; border-radius:5px; margin-bottom:5px;'><strong>@John</strong> started following you.</div><div style='background:#111; padding:10px; border-radius:5px;'>Suggestion: Follow <strong>@Maya</strong></div>";
-            } else if (tabName === 'messages') {
-                contentDiv.innerHTML = "<h3>Direct Messages</h3><p style='color:#aaa; font-size:12px;'>End-to-end encrypted.</p><div style='background:#111; padding:10px; border-radius:5px;'><strong>@Maya:</strong> Hey, want to do a heist later?</div>";
+            } else {
+                contentDiv.innerHTML = `<h3>${tabName.charAt(0).toUpperCase() + tabName.slice(1)}</h3><p style='color:#aaa'>Feature coming soon...</p>`;
             }
         }
     </script>
