@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Syndicate OS</title>
     <style>
-        /* CSS Reset for Telegram Web constraints */
-        * { box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow: hidden; width: 100vw; height: 100vh; }
+        /* Strict CSS Reset for Telegram Web iframes */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; width: 100vw; height: 100vh; position: fixed; }
         
-        #home-screen { padding: 20px; height: 100%; overflow-y: auto; }
-        .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 40px; color: #555; }
+        #home-screen { padding: 20px; height: 100%; overflow-y: auto; width: 100%; }
+        .status { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 30px; color: #555; }
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .app-icon { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; }
+        .app-icon { text-align: center; font-size: 10px; cursor: pointer; transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; }
         .app-icon:active { transform: scale(0.9); }
-        .icon { width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .icon { width: 50px; height: 50px; border-radius: 12px; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         
         /* App Colors */
         .browser { background: #4285F4; }
@@ -25,21 +25,30 @@
         .contacts { background: #f57c00; }
         .settings { background: #757575; }
 
-        /* The App Screen UI */
-        .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; padding: 20px; overflow-y: auto; z-index: 10; }
-        .back-btn { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: bold; display: block; width: fit-content; }
-        
-        /* Hustlegram & Store UI */
+        /* General App Windows */
+        .app-window { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; overflow-y: auto; z-index: 10; }
+        .app-header { padding: 15px 20px; background: #000; display: flex; align-items: center; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #222; }
+        .back-btn { background: transparent; color: #4285F4; border: none; font-size: 16px; cursor: pointer; margin-right: 15px; font-weight: bold; }
+        .app-content { padding: 20px; }
+
+        /* Store Specific UI */
+        .search-bar { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #222; color: #fff; margin-bottom: 20px; outline: none; }
+        .store-list-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #222; cursor: pointer; }
+        .store-list-item:active { background: #1a1a1a; }
+        .store-list-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px; }
+        .store-detail-view { display: none; padding: 20px; text-align: center; }
+        .store-detail-icon { width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 15px; }
+        .install-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
+
+        /* Hustlegram Specific UI */
         .hg-window { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
-        .hg-topbar { padding: 15px; background: #000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; flex-shrink: 0; }
+        .hg-topbar { padding: 15px; background: #000; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
         .hg-logo { font-size: 18px; font-weight: bold; background: -webkit-linear-gradient(#fdf497, #fd5949, #d6249f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hg-content { flex: 1; overflow-y: auto; padding: 15px; background: #0a0a0a; }
-        .hg-bottombar { display: flex; justify-content: space-around; padding: 15px; background: #000; border-top: 1px solid #222; font-size: 20px; flex-shrink: 0; }
+        .hg-bottombar { display: flex; justify-content: space-around; padding: 15px; background: #000; border-top: 1px solid #222; font-size: 20px; }
         .hg-tab { cursor: pointer; opacity: 0.5; transition: 0.2s; }
         .hg-tab.active { opacity: 1; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .hg-btn { background: #222; border: 1px solid #444; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        .store-item { background: #222; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; }
     </style>
 </head>
 <body>
@@ -61,20 +70,52 @@
     </div>
 
     <div id="store-app" class="app-window">
-        <button class="back-btn" onclick="closeApp()">◀ Home</button>
-        <h2>🏪 HustleStore</h2>
-        <p style="color: #aaa; font-size: 12px; margin-top: -10px;">Your digital marketplace.</p>
-        
-        <div class="store-item">
-            <div style="display:flex; align-items:center;">
-                <div class="icon hgram" style="width:40px; height:40px; font-size:16px; margin:0 10px 0 0;">📸</div>
-                <div><strong style="font-size:14px;">Hustlegram</strong><br><span style="color:#aaa; font-size:12px;">Social Media</span></div>
-            </div>
-            <button id="store-btn-hgram" class="hg-btn" onclick="toggleApp('hustlegram')">Install</button>
+        <div class="app-header">
+            <button class="back-btn" onclick="closeApp()">◀</button>
+            <h2 style="font-size: 18px; margin: 0;">HustleStore</h2>
         </div>
-        <p style="color: #666; font-size: 10px; text-align: center; margin-top: 20px;">
-            ⚠️ Notice: Deleting apps here removes them from your screen. To permanently sync to the server, you must still use /hustlestore in the bot chat.
-        </p>
+        
+        <div id="store-home" class="app-content">
+            <input type="text" id="store-search" class="search-bar" placeholder="Search games & apps..." onkeyup="filterStore()">
+            
+            <div id="store-list">
+                <div class="store-list-item" onclick="openAppDetail('hustlegram')">
+                    <div class="store-list-icon hgram">📸</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:16px;">Hustlegram</div>
+                        <div style="color:#aaa; font-size:12px;">Social Media • 50MB</div>
+                    </div>
+                    <div style="color:#4285F4; font-size:12px; font-weight:bold;">GET</div>
+                </div>
+                
+                <div class="store-list-item" onclick="openAppDetail('mazebank')">
+                    <div class="store-list-icon bank">🏦</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:16px;">Maze Bank Mobile</div>
+                        <div style="color:#aaa; font-size:12px;">Finance • 10MB</div>
+                    </div>
+                    <div style="color:#4285F4; font-size:12px; font-weight:bold;">INSTALLED</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="store-detail" class="store-detail-view">
+            <div style="text-align:left; margin-bottom:20px;">
+                <span style="color:#4285F4; font-weight:bold; cursor:pointer;" onclick="closeAppDetail()">◀ Back to Search</span>
+            </div>
+            
+            <div id="detail-icon" class="store-detail-icon hgram">📸</div>
+            <h2 id="detail-name" style="margin-bottom: 5px;">Hustlegram</h2>
+            <p id="detail-cat" style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Social Media</p>
+            
+            <div style="background: #222; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 20px;">
+                <h3 style="font-size: 14px; margin-bottom: 10px;">About this app</h3>
+                <p id="detail-desc" style="font-size: 12px; color: #ccc; line-height: 1.5;">The #1 social network in Los Santos. Share your life, gain followers, and get verified with the official ZENDIX Blue Tick.</p>
+            </div>
+
+            <button id="detail-action-btn" class="install-btn" onclick="toggleStoreApp('hustlegram')">Install App</button>
+            <p style="color: #666; font-size: 10px; margin-top: 15px;">*Data charges apply. Use /hustlestore in bot to fully sync to server.</p>
+        </div>
     </div>
 
     <div id="hgram-app" class="app-window hg-window">
@@ -91,43 +132,109 @@
         </div>
     </div>
 
-    <div id="msg-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>💬 SMS</h2></div>
-    <div id="contacts-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>📇 Contacts</h2></div>
-    <div id="browser-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🌐 Browser</h2></div>
-    <div id="bank-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🏦 Bank</h2></div>
-    <div id="garage-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>🚘 Garage</h2></div>
-    <div id="settings-app" class="app-window"><button class="back-btn" onclick="closeApp()">◀ Home</button><h2>⚙️ Settings</h2></div>
+    <div id="msg-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>SMS</h2></div></div>
+    <div id="contacts-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>Contacts</h2></div></div>
+    <div id="browser-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>Browser</h2></div></div>
+    <div id="bank-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>Maze Bank</h2></div></div>
+    <div id="garage-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>Garage</h2></div></div>
+    <div id="settings-app" class="app-window"><div class="app-header"><button class="back-btn" onclick="closeApp()">◀</button><h2>Settings</h2></div></div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         document.getElementById('data-count').innerText = (urlParams.get('data') || "0") + " MB";
         
-        // App Installation Logic
         let installedApps = (urlParams.get('apps') || "").split(',');
 
-        function updateStoreUI() {
-            const hgBtn = document.getElementById('store-btn-hgram');
+        // App Navigation Logic
+        function openApp(appId) {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById(appId).style.display = 'flex';
+            if(appId === 'hgram-app') switchHgTab('home'); 
+            if(appId === 'store-app') {
+                document.getElementById('store-home').style.display = 'block';
+                document.getElementById('store-detail').style.display = 'none';
+            }
+        }
+        function closeApp() {
+            document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
+            document.getElementById('home-screen').style.display = 'block';
+            updateHomeScreenIcons();
+        }
+
+        // --- NEW STORE LOGIC ---
+        function updateHomeScreenIcons() {
             if (installedApps.includes('hustlegram')) {
-                hgBtn.innerText = 'Delete';
-                hgBtn.style.background = '#e53935'; 
-                document.getElementById('hgram-icon').style.display = 'block';
+                document.getElementById('hgram-icon').style.display = 'flex';
             } else {
-                hgBtn.innerText = 'Install';
-                hgBtn.style.background = '#34A853'; 
                 document.getElementById('hgram-icon').style.display = 'none';
             }
         }
-        
-        function toggleApp(appName) {
+        updateHomeScreenIcons();
+
+        function filterStore() {
+            let input = document.getElementById('store-search').value.toUpperCase();
+            let items = document.getElementsByClassName('store-list-item');
+            for (let i = 0; i < items.length; i++) {
+                let text = items[i].innerText;
+                if (text.toUpperCase().indexOf(input) > -1) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+
+        function openAppDetail(appId) {
+            document.getElementById('store-home').style.display = 'none';
+            document.getElementById('store-detail').style.display = 'block';
+            
+            const btn = document.getElementById('detail-action-btn');
+            
+            if (appId === 'hustlegram') {
+                document.getElementById('detail-icon').className = 'store-detail-icon hgram';
+                document.getElementById('detail-icon').innerText = '📸';
+                document.getElementById('detail-name').innerText = 'Hustlegram';
+                document.getElementById('detail-cat').innerText = 'Social Media • 50MB';
+                document.getElementById('detail-desc').innerText = 'The #1 social network in Los Santos. Share your life, gain followers, and get verified with the official ZENDIX Blue Tick.';
+                btn.onclick = () => toggleStoreApp('hustlegram');
+                
+                if (installedApps.includes('hustlegram')) {
+                    btn.innerText = 'Uninstall';
+                    btn.style.background = '#e53935';
+                    btn.style.color = '#fff';
+                } else {
+                    btn.innerText = 'Install';
+                    btn.style.background = '#fff';
+                    btn.style.color = '#000';
+                }
+            } else if (appId === 'mazebank') {
+                document.getElementById('detail-icon').className = 'store-detail-icon bank';
+                document.getElementById('detail-icon').innerText = '🏦';
+                document.getElementById('detail-name').innerText = 'Maze Bank Mobile';
+                document.getElementById('detail-cat').innerText = 'Finance • Pre-installed';
+                document.getElementById('detail-desc').innerText = 'Secure offshore banking app. Built into Syndicate OS by default.';
+                btn.innerText = 'System App - Cannot Uninstall';
+                btn.style.background = '#444';
+                btn.style.color = '#aaa';
+                btn.onclick = null;
+            }
+        }
+
+        function closeAppDetail() {
+            document.getElementById('store-home').style.display = 'block';
+            document.getElementById('store-detail').style.display = 'none';
+        }
+
+        function toggleStoreApp(appName) {
             if (installedApps.includes(appName)) {
                 installedApps = installedApps.filter(a => a !== appName);
             } else {
                 installedApps.push(appName);
             }
-            updateStoreUI();
+            // Refresh detail view button
+            openAppDetail(appName);
+            updateHomeScreenIcons();
         }
-
-        updateStoreUI();
 
         // Profile Stats Logic
         const hgHandle = urlParams.get('hghandle') || "";
@@ -137,16 +244,6 @@
         const flwrList = (rawFlwr && rawFlwr !== "None") ? rawFlwr.split(',') : [];
         const flwgList = (rawFlwg && rawFlwg !== "None") ? rawFlwg.split(',') : [];
 
-        function openApp(appId) {
-            document.getElementById('home-screen').style.display = 'none';
-            document.getElementById(appId).style.display = 'flex';
-            if(appId === 'hgram-app') switchHgTab('home'); 
-        }
-        function closeApp() {
-            document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
-            document.getElementById('home-screen').style.display = 'block';
-        }
-
         function switchHgTab(tabName) {
             document.querySelectorAll('.hg-tab').forEach(t => t.classList.remove('active'));
             if(document.getElementById('tab-' + tabName)) { document.getElementById('tab-' + tabName).classList.add('active'); }
@@ -154,7 +251,7 @@
             const contentDiv = document.getElementById('hg-dynamic-content');
             
             if (tabName === 'home') {
-                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Just launched Syndicate OS 4.0! Welcome to the new era.</p></div>";
+                contentDiv.innerHTML = "<h3>Feed</h3><div style='background:#111; padding:15px; border-radius:8px;'><strong>@ZENDIX ☑️</strong><p>Just launched Syndicate OS 5.0! The new app store is blazing fast.</p></div>";
             } else if (tabName === 'profile') {
                 const displayName = hgHandle ? "@" + hgHandle : "@Unknown";
                 const tickHtml = hgTick ? "<span style='color:#1DA1F2; margin-left:5px;' title='Verified by ZENDIX'>☑️</span>" : "";
