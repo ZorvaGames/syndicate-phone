@@ -236,32 +236,66 @@
         }
 
         // --- BROWSER LOGIC ---
+       // --- BROWSER LOGIC (UPGRADED INTERNET) ---
         function loadWebsite() {
             let url = document.getElementById('browser-url').value.toLowerCase();
             let content = document.getElementById('browser-content');
             
+            // 1. NEWS WEBSITE
             if(url.includes('news')) {
                 content.innerHTML = `
                     <div style="padding: 20px; font-family: serif;">
                         <h2 style="border-bottom:2px solid #000; padding-bottom:10px;">Los Santos Tribune</h2>
-                        <h3 style="margin-top:20px;">Syndicate OS Launches</h3>
-                        <p style="font-size:14px; line-height:1.6;">Citizens are reporting massive spikes in underground network activity as the notorious ZENDIX releases the latest smartphone update.</p>
+                        <h3 style="margin-top:20px;">Syndicate OS Takes Over</h3>
+                        <p style="font-size:14px; line-height:1.6;">The FIB is investigating a massive spike in underground network activity linked to the infamous developer known as ZENDIX.</p>
                     </div>`;
+            
+            // 2. ADSTERRA MONEY LINK
             } else if (url.includes('earn') || url.includes('cash')) {
                 content.innerHTML = `
                     <div style="padding: 20px; text-align:center; font-family: sans-serif;">
-                        <h2 style="color:#34A853;">💸 Cash Rewards</h2>
+                        <h2 style="color:#34A853;">💸 Syndicate Rewards</h2>
                         <p style="color:#666;">Watch sponsored content to earn $500 in-game cash!</p>
-                        <div style="background:#eee; padding:30px; border-radius:10px; margin: 20px 0;">
-                            <p style="color:#888; font-size:12px;">[ Advertisement Space ]<br>Place Real Adsterra/Monetag Ads Here Later</p>
-                        </div>
-                        <button onclick="window.location.href='https://t.me/Ofmaya_bot?start=reward'" style="background:#34A853; color:white; padding:15px; border:none; border-radius:10px; font-size:16px; font-weight:bold; width:100%; cursor:pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">CLAIM $500 REWARD</button>
+                        <button onclick="window.open('YOUR_ADSTERRA_DIRECT_LINK_HERE', '_blank'); setTimeout(() => window.location.href='https://t.me/Ofmaya_bot?start=reward', 15000);" style="background:#34A853; color:white; padding:15px; border:none; border-radius:10px; font-size:16px; font-weight:bold; width:100%; cursor:pointer; margin-top:20px;">CLAIM $500 REWARD</button>
+                        <p style="font-size:10px; color:#aaa; margin-top:10px;">Wait 15 seconds after clicking to receive funds.</p>
                     </div>`;
+            
+            // 3. DARK WEB BLACK MARKET
+            } else if (url.includes('darknet') || url.includes('silk')) {
+                content.innerHTML = `
+                    <div style="padding: 20px; background:#0a0a0a; color:#0f0; font-family: monospace; min-height: 100%;">
+                        <h2 style="text-align:center; border-bottom: 1px solid #0f0; padding-bottom:10px;">💀 THE SILK ROAD 💀</h2>
+                        <p style="font-size:12px; color:#888;">Untraceable black market hardware.</p>
+                        
+                        <div style="border:1px solid #0f0; padding:15px; margin-bottom:15px; border-radius:5px;">
+                            <strong style="font-size:18px;">Glock 19</strong><br>
+                            <span style="color:#aaa;">Price: $2,500</span><br>
+                            <span style="font-size:10px; color:#555;">Increases success rate of /crime.</span>
+                            <button onclick="alert('Close phone and type: /buy_weapon glock')" style="float:right; background:#0f0; color:#000; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; margin-top:-20px;">BUY</button>
+                        </div>
+
+                        <div style="border:1px solid #0f0; padding:15px; border-radius:5px;">
+                            <strong style="font-size:18px;">Hacking Laptop</strong><br>
+                            <span style="color:#aaa;">Price: $5,000</span><br>
+                            <span style="font-size:10px; color:#555;">Used for digital bank heists.</span>
+                            <button onclick="alert('Close phone and type: /buy_weapon laptop')" style="float:right; background:#0f0; color:#000; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; margin-top:-20px;">BUY</button>
+                        </div>
+                    </div>`;
+            
+            // 4. REAL WORLD BLOCKER (If they type Google/Chrome)
+            } else if (url.includes('google') || url.includes('chrome') || url.includes('youtube')) {
+                content.innerHTML = `
+                    <div style="padding: 30px; text-align:center; font-family:sans-serif;">
+                        <h2 style="color:#e53935;">⚠️ FIREWALL BLOCKED</h2>
+                        <p style="color:#444;">Syndicate OS has blocked outbound connections to the Clearnet to protect your IP address from the FIB.</p>
+                        <p style="font-size:12px; color:#888;">Stick to the underground networks, Citizen.</p>
+                    </div>`;
+            
+            // 404 NOT FOUND
             } else {
-                content.innerHTML = `<div style="padding: 30px; text-align:center;"><h2 style="color:#e53935;">404 Not Found</h2><p>The server at ${url} could not be reached.</p></div>`;
+                content.innerHTML = `<div style="padding: 40px; text-align:center;"><h2 style="color:#e53935;">404 Not Found</h2><p style="color:#666;">The server at <strong>${url}</strong> could not be reached.</p></div>`;
             }
         }
-
         // --- PROFILE STATS & TABS LOGIC ---
         const hgHandle = urlParams.get('hghandle') || "";
         const hgTick = urlParams.get('hgtick') === '1';
